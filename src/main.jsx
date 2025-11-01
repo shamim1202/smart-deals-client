@@ -3,6 +3,11 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import AllProducts from "./components/AllProducts/AllProducts.jsx";
 import Home from "./components/Home/Home.jsx";
+import Login from "./components/Login/Login.jsx";
+import MyBids from "./components/MyBids/MyBids.jsx";
+import MyProducts from "./components/MyProducts/MyProducts.jsx";
+import Register from "./components/Register/Register.jsx";
+import AuthProvider from "./context/AuthProvider.jsx";
 import "./index.css";
 import RootLayout from "./layout/RootLayout.jsx";
 
@@ -19,12 +24,30 @@ const router = createBrowserRouter([
         path: "allproducts",
         Component: AllProducts,
       },
+      {
+        path: "register",
+        Component: Register,
+      },
+      {
+        path: "login",
+        Component: Login,
+      },
+      {
+        path: "myproducts",
+        Component: MyProducts,
+      },
+      {
+        path: "mybids",
+        Component: MyBids,
+      },
     ],
   },
 ]);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router}></RouterProvider>
+    <AuthProvider>
+      <RouterProvider router={router}></RouterProvider>
+    </AuthProvider>
   </StrictMode>
 );

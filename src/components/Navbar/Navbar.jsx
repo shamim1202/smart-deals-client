@@ -1,6 +1,9 @@
+import { useContext } from "react";
 import { Link } from "react-router";
+import { AuthContext } from "../../context/AuthContext";
 
 const Navbar = () => {
+  const { user, logOut } = useContext(AuthContext);
   const links = (
     <>
       <li>
@@ -9,8 +12,29 @@ const Navbar = () => {
       <li>
         <Link to="/allproducts">All Products</Link>
       </li>
+      {user && (
+        <>
+          <li>
+            <Link to="/myproducts">My Products</Link>
+          </li>
+          <li>
+            <Link to="/mybids">My Bids</Link>
+          </li>
+        </>
+      )}
     </>
   );
+
+  const handleLogOut = () => {
+    logOut()
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <div>
       <div className="navbar bg-base-100 shadow-sm">
@@ -41,7 +65,8 @@ const Navbar = () => {
             </ul>
           </div>
           <Link to="/" className="font-bold md:font-extrabold md:text-3xl">
-            Smart <span className="text-secondary md:font-extrabold">Deals</span>
+            Smart{" "}
+            <span className="text-secondary md:font-extrabold">Deals</span>
           </Link>
         </div>
 
@@ -50,7 +75,22 @@ const Navbar = () => {
         </div>
 
         <div className="navbar-end">
-          <a className="btn">Button</a>
+          {user ? (
+            <button
+              onClick={handleLogOut}
+              className="btn btn-secondary btn-sm md:btn-md"
+            >
+              Logout
+            </button>
+          ) : (
+            <>
+              <Link to="/register" className="btn btn-outline btn-secondary btn-sm md:btn-md md:mr-5 md:px-6">
+                Register
+              </Link>
+
+              <Link to="/login" className="btn btn-secondary btn-sm md:btn-md  md:px-8">Login</Link>
+            </>
+          )}
         </div>
       </div>
     </div>
