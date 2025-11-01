@@ -8,7 +8,23 @@ const Register = () => {
   const handleGoogleLogin = () => {
     googleLogin()
       .then((res) => {
-        console.log(res);
+        console.log(res.user);
+        const newUser = {
+          name: res.user.displayName,
+          email: res.user.email,
+          photo: res.user.photoURL,
+        };
+        fetch("http://localhost:3000/users", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(newUser),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("data after save", data);
+          });
       })
       .catch((err) => {
         console.log(err);
