@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar/Navbar";
 
 const RootLayout = () => {
   return (
-    <div>
+    <div className="bg-base-300">
       <Navbar></Navbar>
       <Outlet></Outlet>
     </div>
