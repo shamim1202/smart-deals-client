@@ -1,8 +1,40 @@
+import { useContext, useRef } from "react";
 import { useLoaderData } from "react-router";
+import { AuthContext } from "../../context/AuthContext";
 
 const ProductDetails = () => {
-  const product = useLoaderData();
-  console.log(product);
+  const { user } = useContext(AuthContext);
+  console.log(user);
+  const bidModalRef = useRef(null);
+  const {
+    _id,
+    image,
+    title,
+    condition,
+    usage,
+    description,
+    category,
+    price_max,
+    price_min,
+    created_at,
+    location,
+    seller_contact,
+    status,
+    seller_image,
+    seller_name,
+    email,
+  } = useLoaderData();
+  const handleBidModal = () => {
+    bidModalRef.current.showModal();
+  };
+  const handleBidSubmit = (e) => {
+    e.preventDefault();
+    const name = e.target.name.value;
+    const email = e.target.email.value;
+    const bid = e.target.bid.value;
+    console.log({ _id, name, email, bid });
+  };
+
   return (
     <div className="md:max-w-7xl mx-auto md:py-14 flex flex-col md:gap-10">
       {/* Products Details Section */}
@@ -11,10 +43,10 @@ const ProductDetails = () => {
           {/* Left Section - Image & Description */}
           <div className="space-y-6">
             <div className="w-full md:h-96 rounded-xl flex items-center justify-center">
-              {product.image ? (
+              {image ? (
                 <img
-                  src={product.image}
-                  alt={product.title}
+                  src={image}
+                  alt={title}
                   className="h-full w-full object-cover rounded-2xl"
                 />
               ) : (
@@ -24,21 +56,16 @@ const ProductDetails = () => {
 
             <div className="md:space-y-2 p-6 bg-white rounded-xl">
               <h1 className="md:text-xl font-bold">Product Description</h1>
-
               <div className="text-sm md:text-lg font-semibold flex items-center justify-between">
                 <p className="text-secondary">
-                  Condition :
-                  <span className="text-primary"> {product.condition}</span>
+                  Condition :<span className="text-primary"> {condition}</span>
                 </p>
                 <p className="text-secondary">
-                  Usage Time :
-                  <span className="text-primary"> {product.usage}</span>
+                  Usage Time :<span className="text-primary"> {usage}</span>
                 </p>
               </div>
 
-              <p className="text-gray-600 leading-relaxed">
-                {product.description}
-              </p>
+              <p className="text-gray-600 leading-relaxed">{description}</p>
             </div>
           </div>
 
@@ -53,18 +80,18 @@ const ProductDetails = () => {
                 ← Back To Products
               </button>
               <h1 className="text-xl md:text-4xl font-semibold md:font-bold md:mb-4">
-                {product.title}
+                {title}
               </h1>
 
               <button className="text-secondary md:px-3 rounded-4xl bg-purple-300">
-                {product.category}
+                {category}
               </button>
             </div>
 
             {/* Products price */}
             <div className="md:p-4 bg-white rounded-lg">
               <p className="text-lg md:text-2xl font-bold text-green-600">
-                ${product.price_min} - {product.price_max}
+                ${price_min} - {price_max}
               </p>
               <p className="text-sm text-gray-500">Price starts from</p>
             </div>
@@ -75,46 +102,124 @@ const ProductDetails = () => {
 
               <div className="text-sm md:text-lg space-y-1">
                 <p>
-                  <strong>Product ID:</strong> {product._id}
+                  <strong>Product ID:</strong> {_id}
                 </p>
                 <p>
-                  <strong>Posted:</strong> {product.created_at}
+                  <strong>Posted:</strong> {created_at}
                 </p>
               </div>
             </div>
 
+            {/* Seller information */}
             <div className="md:p-4 bg-white rounded-lg">
               <h1 className="md:text-2xl font-bold md:mb-4">
                 Seller Information
               </h1>
               <div className="text-sm md:text-lg space-y-1">
                 <div className="flex items-center gap-2 md:gap-4">
-                  <img src={product.seller_image} alt={product.seller_name} />
+                  <img src={seller_image} alt={seller_name} />
                   <div>
                     <p>
-                      <strong>{product.seller_name}</strong>
+                      <strong>{seller_name}</strong>
                     </p>
-                    <p>{product.email}</p>
+                    <p>{email}</p>
                   </div>
                 </div>
                 <p>
-                  <strong>Location:</strong> {product.location}
+                  <strong>Location:</strong> {location}
                 </p>
                 <p>
-                  <strong>Contact:</strong> {product.seller_contact}
+                  <strong>Contact:</strong> {seller_contact}
                 </p>
                 <p className="flex items-center md:gap-4">
-                  <strong>Status:</strong> <div>
-                    {
-                      product.status === "sold" ? `Sold` : "Pending"
-                    }</div>
+                  <strong>Status:</strong>{" "}
+                  <div>{status === "sold" ? `Sold` : "Pending"}</div>
                 </p>
               </div>
             </div>
-            
-          <button className="w-full md:text-lg btn btn-secondary">
-            I Want Buy This Product
-          </button>
+
+            {/* Buy button with product bid modal form */}
+            <button
+              onClick={handleBidModal}
+              className="w-full md:text-lg btn btn-secondary"
+            >
+              I Want Buy This Product
+              <dialog
+                ref={bidModalRef}
+                className="modal modal-bottom sm:modal-middle"
+              >
+                <div className="modal-box text-primary">
+                  <h3 className="font-bold text-lg md:text-2xl md:py-4">
+                    Give Seller Your Offer Price
+                  </h3>
+
+                  {/* Bid Form */}
+                  <form onSubmit={handleBidSubmit}>
+                    <fieldset className="fieldset rounded-box w-full">
+                      <div className="flex flex-row items-center gap-2 md:mb-2.5">
+                        <div className="flex flex-col flex-1">
+                          <label className="label md:text-base text-primary md:pb-1">Buyer Name</label>
+                          <input
+                            type="text"
+                            name="name"
+                            className="input w-full font-normal md:text-lg"
+                            defaultValue={user.displayName}
+                            readOnly
+                          />
+                        </div>
+
+                        <div className="flex flex-col flex-1">
+                          <label className="label md:text-base text-primary md:pb-1">Buyer Email</label>
+                          <input
+                            type="email"
+                            name="email"
+                            className="input w-full font-normal md:text-lg"
+                            defaultValue={user.email}
+                            readOnly
+                          />
+                        </div>
+                      </div>
+
+                      <label className="label md:text-base text-primary">Place Your Price</label>
+                      <input
+                        type="number"
+                        name="bid"
+                        className="input w-full md:mb-2.5 md:text-lg font-normal"
+                        placeholder="Amount $"
+                      />
+                      <label className="label md:text-base text-primary">Contact Info</label>
+                      <input
+                        type="number"
+                        className="input w-full md:mb-5 font-normal md:text-lg"
+                        placeholder="e.g. +880-123-45678-901"
+                        required
+                      />
+
+                      <div className="flex items-center justify-between gap-3 md:gap-5">
+                        <button className="btn btn-outline btn-secondary w-full flex-1">
+                          Cancel
+                        </button>
+                        <button
+                          className="btn btn-secondary w-full flex-1"
+                          type="submit"
+                        >
+                          Submit Bid
+                        </button>
+                      </div>
+                    </fieldset>
+                  </form>
+
+                  <div className="modal-action">
+                    <form method="dialog">
+                      {/* if there is a button in form, it will close the modal */}
+                      <button className="btn btn-outline btn-secondary">
+                        Cancel
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </dialog>
+            </button>
           </div>
         </div>
       </section>
