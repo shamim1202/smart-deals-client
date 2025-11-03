@@ -32,9 +32,6 @@ const ProductDetails = () => {
   const handleBidModal = () => {
     bidModalRef.current.showModal();
   };
-  // const handleCancel = () => {
-  //   bidModalRef.current.close();
-  // };
 
   const handleBidSubmit = (e) => {
     e.preventDefault();
