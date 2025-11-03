@@ -1,11 +1,15 @@
-import { useContext, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useLoaderData } from "react-router";
+import Swal from "sweetalert2";
 import { AuthContext } from "../../context/AuthContext";
 
 const ProductDetails = () => {
   const { user } = useContext(AuthContext);
   console.log(user);
+  const [bids, setBids] = useState([]);
+
   const bidModalRef = useRef(null);
+
   const {
     _id,
     image,
@@ -24,16 +28,66 @@ const ProductDetails = () => {
     seller_name,
     email,
   } = useLoaderData();
+
   const handleBidModal = () => {
     bidModalRef.current.showModal();
   };
+  // const handleCancel = () => {
+  //   bidModalRef.current.close();
+  // };
+
   const handleBidSubmit = (e) => {
     e.preventDefault();
     const name = e.target.name.value;
     const email = e.target.email.value;
     const bid = e.target.bid.value;
-    console.log({ _id, name, email, bid });
+    const contact = e.target.contact.value;
+
+    const newBid = {
+      product: _id,
+      buyer_image: "https://example.com/buyers/alex.jpg",
+      buyer_name: name,
+      buyer_contact: contact,
+      buyer_email: email,
+      bid_price: parseInt(bid),
+      status: "status",
+    };
+
+    fetch("http://localhost:3000/bids", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(newBid),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.insertedId) {
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "Your Bid Placed Successful",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          newBid._id = data.insertedId;
+          const newBids = [...bids, newBid];
+          newBids.sort((a, b) => b.bid_price - a.bid_price);
+          setBids(newBids);
+          bidModalRef.current.close();
+        }
+      });
   };
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/products/bids/${_id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("bidding products", data);
+        setBids(data);
+      });
+  }, [_id]);
 
   return (
     <div className="md:max-w-7xl mx-auto md:py-14 flex flex-col md:gap-10">
@@ -158,38 +212,48 @@ const ProductDetails = () => {
                     <fieldset className="fieldset rounded-box w-full">
                       <div className="flex flex-row items-center gap-2 md:mb-2.5">
                         <div className="flex flex-col flex-1">
-                          <label className="label md:text-base text-primary md:pb-1">Buyer Name</label>
+                          <label className="label md:text-base text-primary md:pb-1">
+                            Buyer Name
+                          </label>
                           <input
                             type="text"
                             name="name"
                             className="input w-full font-normal md:text-lg"
-                            defaultValue={user.displayName}
+                            defaultValue={user?.displayName}
                             readOnly
                           />
                         </div>
 
                         <div className="flex flex-col flex-1">
-                          <label className="label md:text-base text-primary md:pb-1">Buyer Email</label>
+                          <label className="label md:text-base text-primary md:pb-1">
+                            Buyer Email
+                          </label>
                           <input
                             type="email"
                             name="email"
                             className="input w-full font-normal md:text-lg"
-                            defaultValue={user.email}
+                            defaultValue={user?.email}
                             readOnly
                           />
                         </div>
                       </div>
 
-                      <label className="label md:text-base text-primary">Place Your Price</label>
+                      <label className="label md:text-base text-primary">
+                        Place Your Price
+                      </label>
                       <input
                         type="number"
                         name="bid"
                         className="input w-full md:mb-2.5 md:text-lg font-normal"
                         placeholder="Amount $"
                       />
-                      <label className="label md:text-base text-primary">Contact Info</label>
+
+                      <label className="label md:text-base text-primary">
+                        Contact Info
+                      </label>
                       <input
                         type="number"
+                        name="contact"
                         className="input w-full md:mb-5 font-normal md:text-lg"
                         placeholder="e.g. +880-123-45678-901"
                         required
@@ -199,6 +263,7 @@ const ProductDetails = () => {
                         <button className="btn btn-outline btn-secondary w-full flex-1">
                           Cancel
                         </button>
+
                         <button
                           className="btn btn-secondary w-full flex-1"
                           type="submit"
@@ -227,8 +292,53 @@ const ProductDetails = () => {
       {/* All bids for this products section */}
       <section>
         <h1 className="text-xl md:text-3xl font-bold">
-          Bids For This Products : {}
+          Bids For This Products :{" "}
+          <span className="text-secondary">{bids.length}</span>
         </h1>
+
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <table className="table">
+            {/* head */}
+            <thead>
+              <tr>
+                <th>Sl No.</th>
+                <th>Buyer Name</th>
+                <th>Buyer Email</th>
+                <th>Bid Price</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* row 1 */}
+              {bids.map((bid, index) => (
+                <tr>
+                  <th>{index + 1}</th>
+                  <td>
+                    <div className="flex items-center gap-3">
+                      <div className="avatar">
+                        <div className="mask mask-squircle h-12 w-12">
+                          <img
+                            src={user?.buyer_image}
+                            alt={user?.displayName}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <div className="font-bold">{bid.buyer_name}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{bid.buyer_email}</td>
+                  <td>{bid.bid_price}</td>
+                  <th>
+                    <button className="btn btn-ghost btn-xs">details</button>
+                  </th>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
     </div>
   );
