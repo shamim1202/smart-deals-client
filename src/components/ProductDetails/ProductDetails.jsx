@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useLoaderData } from "react-router";
 import Swal from "sweetalert2";
@@ -77,17 +78,24 @@ const ProductDetails = () => {
       });
   };
 
+  // useEffect(() => {
+  //   fetch(`http://localhost:3000/products/bids/${_id}`, {
+  //     headers: {
+  //       authorization: `Bearer ${user.accessToken}`,
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       setBids(data);
+  //     });
+  // }, [_id, user]);
+
   useEffect(() => {
-    fetch(`http://localhost:3000/products/bids/${_id}`, {
-      headers: {
-        authorization: `Bearer ${user.accessToken}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setBids(data);
-      });
-  }, [_id, user]);
+    axios.get(`http://localhost:3000/products/bids/${_id}`).then((data) => {
+      console.log("after hit axios get api", data);
+      setBids(data.data);
+    });
+  }, [_id]);
 
   return (
     <div className="md:max-w-7xl mx-auto md:py-14 flex flex-col md:gap-10">

@@ -20,6 +20,9 @@ const Navbar = () => {
           <li>
             <Link to="/mybids">My Bids</Link>
           </li>
+          <li>
+            <Link to="/create-a-product">Create A Product</Link>
+          </li>
         </>
       )}
     </>

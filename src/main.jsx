@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import AllProducts from "./components/AllProducts/AllProducts.jsx";
+import CreateProduct from "./components/CreateProduct/CreateProduct.jsx";
 import Home from "./components/Home/Home.jsx";
 import Login from "./components/Login/Login.jsx";
 import MyBids from "./components/MyBids/MyBids.jsx";
@@ -57,6 +58,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoutes>
             <ProductDetails></ProductDetails>
+          </PrivateRoutes>
+        ),
+      },
+      {
+        path: "create-a-product",
+        element: (
+          <PrivateRoutes>
+            <CreateProduct></CreateProduct>
           </PrivateRoutes>
         ),
       },
