@@ -78,13 +78,17 @@ const ProductDetails = () => {
   };
 
   useEffect(() => {
-    fetch(`http://localhost:3000/products/bids/${_id}`)
+    fetch(`http://localhost:3000/products/bids/${_id}`, {
+      headers: {
+        authorization: `Bearer ${user.accessToken}`
+      }
+    })
       .then((res) => res.json())
       .then((data) => {
         console.log("bidding products", data);
         setBids(data);
       });
-  }, [_id]);
+  }, [_id, user]);
 
   return (
     <div className="md:max-w-7xl mx-auto md:py-14 flex flex-col md:gap-10">
