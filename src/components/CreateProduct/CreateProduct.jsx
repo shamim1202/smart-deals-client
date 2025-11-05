@@ -1,9 +1,11 @@
-import axios from "axios";
 import Swal from "sweetalert2";
 import useAuth from "../../hooks/useAuth";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const CreateProduct = () => {
   const { user } = useAuth();
+  // const axiosInstance = useAxios();
+  const axiosSecure = useAxiosSecure();
   const handleCreateProduct = (e) => {
     e.preventDefault();
 
@@ -21,7 +23,7 @@ const CreateProduct = () => {
       seller_name: user.displayName,
     };
 
-    axios.post("http://localhost:3000/product", newProduct).then((data) => {
+    axiosSecure.post("/product", newProduct).then((data) => {
       console.log("add product via axios", data);
       if (data.data.insertedId) {
         Swal.fire({
@@ -60,7 +62,8 @@ const CreateProduct = () => {
               type="email"
               name="email"
               className="input w-full md:mb-5 font-normal md:text-lg"
-              placeholder="Your e-mail"
+              defaultValue={user.email}
+              disabled
               required
             />
 
