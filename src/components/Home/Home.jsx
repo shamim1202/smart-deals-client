@@ -1,7 +1,7 @@
 import LatestProducts from "../LatestProducts/LatestProducts";
 
 const latestProductPromise = fetch(
-  "http://localhost:3000/latest-products"
+  "https://smart-deals-server-seven.vercel.app/latest-products"
 ).then((res) => res.json());
 const Home = () => {
   return (
