@@ -1,27 +1,47 @@
-import { useContext } from "react";
-import { Link } from "react-router";
+import { useContext, useState } from "react";
+import { GiHamburgerMenu } from "react-icons/gi";
+import { IoClose } from "react-icons/io5";
+import { Link, NavLink } from "react-router";
 import { AuthContext } from "../../context/AuthContext";
 
 const Navbar = () => {
   const { user, logOut } = useContext(AuthContext);
+  const [Open, setOpen] = useState(false);
+
+  // Navlink Class
+  const navLinkClass = ({ isActive }) =>
+    isActive
+      ? "text-secondary border-b-2 border-secondary"
+      : "text-primary hover:text-secondary border-b-2 border-transparent";
+
   const links = (
     <>
       <li>
-        <Link to="/">Home</Link>
+        <NavLink to="/" end className={navLinkClass}>
+          Home
+        </NavLink>
       </li>
       <li>
-        <Link to="/allproducts">All Products</Link>
+        <NavLink to="/allproducts" className={navLinkClass}>
+          All Products
+        </NavLink>
       </li>
       {user && (
         <>
           <li>
-            <Link to="/myproducts">My Products</Link>
+            <NavLink to="/myproducts" className={navLinkClass}>
+              My Products
+            </NavLink>
           </li>
           <li>
-            <Link to="/mybids">My Bids</Link>
+            <NavLink to="/mybids" className={navLinkClass}>
+              My Bids
+            </NavLink>
           </li>
           <li>
-            <Link to="/create-a-product">Create A Product</Link>
+            <NavLink to="/create-a-product" className={navLinkClass}>
+              Create A Product
+            </NavLink>
           </li>
         </>
       )}
@@ -43,45 +63,37 @@ const Navbar = () => {
       <div className="navbar mx-0 px-0">
         <div className="navbar-start">
           <div className="dropdown">
-            <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                {" "}
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h8m-8 6h16"
-                />{" "}
-              </svg>
-            </div>
-            <ul
-              tabIndex="-1"
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+            <button
+              onClick={() => setOpen(!Open)} // <-- new
+              className="btn btn-ghost lg:hidden"
+              aria-label="Menu"
             >
-              {links}
-            </ul>
+              {Open ? (
+                <IoClose className="w-6 h-6" />
+              ) : (
+                <GiHamburgerMenu className="w-5 h-5" />
+              )}
+            </button>
+            {Open && (
+              <ul className="menu menu-sm dropdown-content bg-base-100 rounded-box mt-2 w-36 p-2 shadow absolute top-full left-2 z-50 lg:hidden">
+                {links}
+              </ul>
+            )}
           </div>
           <Link to="/" className="font-bold md:font-extrabold md:text-3xl">
-            Smart{" "}
-            <span className="text-secondary md:font-extrabold">Deals</span>
+            Smart<span className="text-secondary md:font-extrabold">Deals</span>
           </Link>
         </div>
 
-        <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal px-1">{links}</ul>
+        <div className="navbar-center hidden lg:flex md:font-semibold">
+          <ul className="flex items-center md:gap-4 md:text-lg">{links}</ul>
         </div>
 
         <div className="navbar-end">
           {user ? (
-            <div className="flex items-center md:gap-2">
+            <div className="flex items-center gap-2 md:gap-4">
               <img
-                className="rounded-full md:w-10 "
+                className="rounded-full w-8 md:w-10 "
                 src={user.photoURL}
                 alt=""
                 title={user.displayName}

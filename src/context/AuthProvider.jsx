@@ -51,7 +51,7 @@ const AuthProvider = ({ children }) => {
         })
           .then((res) => res.json())
           .then((data) => {
-            console.log("after token called data", data.token);
+            // console.log("after token called data", data.token);
             localStorage.setItem("token", data.token);
           });
       }

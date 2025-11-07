@@ -195,13 +195,13 @@ const ProductDetails = () => {
                 </p>
                 <p className="flex items-center md:gap-4">
                   <strong>Status:</strong>{" "}
-                  <div>{status === "sold" ? `Sold` : "Pending"}</div>
+                  <span>{status === "sold" ? `Sold` : "Pending"}</span>
                 </p>
               </div>
             </div>
 
             {/* Buy button with product bid modal form */}
-            <button
+            <div
               onClick={handleBidModal}
               className="w-full md:text-lg btn btn-secondary"
             >
@@ -292,7 +292,7 @@ const ProductDetails = () => {
                   </div>
                 </div>
               </dialog>
-            </button>
+            </div>
           </div>
         </div>
       </section>

@@ -1,9 +1,42 @@
-import { Link } from "react-router";
+import { useContext } from "react";
+import { Link, useLocation, useNavigate } from "react-router";
+import { AuthContext } from "../../context/AuthContext";
 
 const Login = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user, googleLogin } = useContext(AuthContext);
+
+  const from = location.state?.from?.pathname || "/";
+
   const handleGoogleLogin = () => {
-    console.log("clicked");
+    googleLogin()
+      .then((res) => {
+        console.log(res.user);
+        const newUser = {
+          name: res.user.displayName,
+          email: res.user.email,
+          photo: res.user.photoURL,
+        };
+        fetch("https://smart-deals-server-seven.vercel.app/users", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(newUser),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("data after save", data);
+          });
+        navigate(from, { replace: true });
+        console.log(location);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
+
   return (
     <div className="hero bg-base-200 min-h-screen">
       <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl md:py-5">
